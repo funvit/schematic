@@ -1,0 +1,54 @@
+//+build gen
+
+package main
+
+import (
+	"os"
+	"log"
+
+	schema "{{.SchemaImport}}"
+	genmodel "github.com/funvit/schematic/genmodel"
+	schemagen "github.com/funvit/schematic"
+)
+
+func main() {
+	
+	linf := log.New(os.Stdout, "INF ", log.LstdFlags)
+	lerr := log.New(os.Stderr, "ERR ", log.LstdFlags)
+
+	m := &schema.{{.Name}}{}
+
+	cfg := genmodel.Model{
+		PackageName: "{{.PackageName}}",
+		SchemaImport: "{{.SchemaImport}}",
+		SchemaPackage: "{{.SchemaPackage}}",
+		SchemaFile: "{{.SchemaFile}}",
+		Name: "{{.Name}}",
+		WriteModelToDir: "{{.WriteToPath}}",
+	}
+
+	var any interface{} = m
+	if v, ok := any.(schemagen.SchemaConfiger); ok {
+		mc := v.Model()
+		cfg.SchemaConfig = &mc
+	}
+
+	{
+		name, err := cfg.GenerateModel(m)
+		if err != nil {
+			lerr.Println("error:", err)
+			os.Exit(1)
+		}
+
+		linf.Println("model file written:", name)
+	}
+	{
+		name, err := cfg.GenerateValidators(m)
+		if err != nil {
+			lerr.Println("error:", err)
+			os.Exit(1)
+		}
+
+		linf.Println("validators file written:", name)
+	}
+}
