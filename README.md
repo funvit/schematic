@@ -1,5 +1,7 @@
 # schematic
 
+[![Go](https://github.com/funvit/schematic/actions/workflows/go.yml/badge.svg)](https://github.com/funvit/schematic/actions/workflows/go.yml)
+
 Generates model and validators by schema definition.
 
 
